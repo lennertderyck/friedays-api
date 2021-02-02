@@ -13,7 +13,7 @@ api.get('/', async (req, res) => {
     })
 })
 
-api.post('/orders/new', async ({ body: newOrder }, res) => {
+api.post('/orders', async ({ body: newOrder }, res) => {
     console.log(newOrder)
     const resp = await base('orders').create([{
         fields: {

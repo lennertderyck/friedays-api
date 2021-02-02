@@ -19,20 +19,12 @@ export const getUsers = async () => (await base('users').select().all()).getFiel
 export const getUserByID = async (...ids) => await base('users').find(ids);
 
 export const getOrders = async () => {
-    const nerds = await getUsers();
-    const shops = await getShops();
     return (await base('orders').select({
         sort: [{field: "time", direction: "desc"}]
     })
     .all())
     .getFields()
-    .map(({ users, shop, ...otherValues }) => {
-        const [ user ] = users;
-        const orderer = nerds.find(({ id }) => id === user)
-        const shopDetails = shop && shops.find(({ recordid }) => recordid === shop)
-        
-        return { users, orderer, shopDetails, ...otherValues }
-    })
+    .addOrderMetaData()
 }
     
 export const getOrdersByID = async (...ids) => [await base('orders').find(ids)].getFields();
@@ -56,7 +48,7 @@ export const getOrdersFromUser = async (userID) => (await base('orders').select(
     }).all())
     .getFields()
     .filter(({ users }) => users.includes(userID))
-
+    .addOrderMetaData()
     
 // HELPERS
 Array.prototype.getFields = function () {
@@ -66,5 +58,18 @@ Array.prototype.getFields = function () {
             id: idFromArray !== 'r' ? idFromArray : id,
             ...fields,
         }
+    })
+}
+
+Array.prototype.addOrderMetaData = async function () {
+    const nerds = await getUsers();
+    const shops = await getShops();
+    
+    return this.map(({ users, shop, ...otherValues }) => {
+        const [ user ] = users;
+        const orderer = nerds.find(({ id }) => id === user)
+        const shopDetails = shop && shops.find(({ recordid }) => recordid === shop)
+        
+        return { users, orderer, shopDetails, ...otherValues }
     })
 }
