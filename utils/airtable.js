@@ -31,12 +31,7 @@ export const getOrders = async () => {
         const orderer = nerds.find(({ id }) => id === user)
         const shopDetails = shop && shops.find(({ recordid }) => recordid === shop)
         
-        return {
-            users,
-            orderer,
-            shopDetails,
-            ...otherValues
-        }
+        return { users, orderer, shopDetails, ...otherValues }
     })
 }
     
