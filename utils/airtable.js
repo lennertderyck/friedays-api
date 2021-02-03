@@ -36,11 +36,11 @@ export const getOrdersByID = async (...ids) => [await base('orders').find(ids)].
 export const getOrdersByDate = async (date = 'today', dateEnd = null) => {
     const after = date === 'today' ? 'TODAY()' : `'${ reformatDate(date) }'`;
     
-    return (
-        await base('orders').select({
-            filterByFormula: `IS_AFTER({time}, ${ after })`
-        }).all()
-    ).getFields();
+    return (await base('orders').select({
+        filterByFormula: `IS_AFTER({time}, ${ after })`
+    }).all())
+    .getFields()
+    .addOrderMetaData();
 }
 
 export const getOrdersFromUser = async (userID) => (await base('orders').select({
