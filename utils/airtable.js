@@ -27,7 +27,9 @@ export const getOrders = async () => {
     .addOrderMetaData()
 }
     
-export const getOrdersByID = async (...ids) => [await base('orders').find(ids)].getFields();
+export const getOrdersByID = async (...ids) => [await base('orders').find(ids)]
+    .getFields()
+    .addOrderMetaData();
 
 /**
  * 

@@ -54,6 +54,9 @@ api.get('/orders/:queryParam?/:query?/', async ({ params: { queryParam, query }}
         case 'nerds' || 'users':
             res.json(await getOrdersFromUser(query));
             break;
+        case 'id' || 'record':
+            res.json(await getOrdersByID(query));
+            break;
         default:
             res.json(await getOrders())
             break;
