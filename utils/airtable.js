@@ -1,7 +1,7 @@
 import Airtable from 'airtable';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat'
-import { getShops } from './getShops';
+import './helpers';
 
 dayjs.extend(customParseFormat)
 
@@ -49,27 +49,3 @@ export const getOrdersFromUser = async (userID) => (await base('orders').select(
     .getFields()
     .filter(({ users }) => users.includes(userID))
     .addOrderMetaData()
-    
-// HELPERS
-Array.prototype.getFields = function () {
-    return this.map(({ id, fields }) => {
-        const [ idFromArray ] = id;
-        return { 
-            id: idFromArray !== 'r' ? idFromArray : id,
-            ...fields,
-        }
-    })
-}
-
-Array.prototype.addOrderMetaData = async function () {
-    const nerds = await getUsers();
-    const shops = await getShops();
-    
-    return this.map(({ users, shop, ...otherValues }) => {
-        const [ user ] = users;
-        const orderer = nerds.find(({ id }) => id === user)
-        const shopDetails = shop && shops.find(({ recordid }) => recordid === shop)
-        
-        return { users, orderer, shopDetails, ...otherValues }
-    })
-}
